@@ -7,7 +7,7 @@
   
   <style>
     /* ==========================================================================
-       1. БАЗОВЫЙ СБРОС И ЦЕНТРИРОВАНИЕ
+       1. СБРОС И ТЕКСТУРА ФОНА
        ========================================================================== */
     *, *::before, *::after {
       box-sizing: border-box;
@@ -16,6 +16,8 @@
     }
 
     body {
+      margin: 0;
+      padding: 0;
       width: 100vw;
       height: 100vh;
       display: flex;
@@ -25,7 +27,6 @@
       background-color: #151515;
     }
 
-    /* ФОНОВАЯ СЕТКА */
     .grid {
       background: repeating-linear-gradient(150deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 49px, rgb(255 255 255 / 10%) 50px, rgb(0 0 0 / 30%) 51px, rgba(255,255,255,0) 55px), 
                   repeating-linear-gradient(30deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 49px, rgb(255 255 255 / 10%) 50px, rgb(0 0 0 / 30%) 51px, rgba(255,255,255,0) 55px);
@@ -36,86 +37,31 @@
     }
 
     /* ==========================================================================
-       2. ЕДИНЫЙ 3D-КОНТЕЙНЕР ДЛЯ ВСЕХ ЭЛЕМЕНТОВ КНОПКИ
+       2. ТОЧНАЯ ИЗОМЕТРИЧЕСКАЯ СЦЕНА (ОРИГИНАЛЬНАЯ ГЕОМЕТРИЯ)
        ========================================================================== */
-    .scene {
+    .scene-wrapper {
       position: relative;
-      width: 45vmin;
-      height: 45vmin;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      transform-style: preserve-3d;
       z-index: 1;
     }
 
-    /* ПЛАТФОРМА ОПАСНОСТИ (ЖЕЛТО-ЧЕРНАЯ) */
-    .warning {
-      position: absolute;
-      width: 45vmin;
-      height: 45vmin;
-      background: repeating-linear-gradient(-45deg, black, black 3vmin, yellow 3vmin, yellow 6vmin);
-      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
-      box-shadow: 0 0 0 3vmin #af0000;
-      z-index: 1;
-    }
-
-    .warning:before {
-      content: "";
-      width: 80%;
-      height: 80%;
-      background: linear-gradient(45deg, #000000 0%, #414141 74%);
-      position: absolute;
-      top: 10%;
-      left: 10%;
-      border: 1vmin solid yellow;
-      border-radius: 1vmin;
-    }
-
-    .warning:after {
-      content: "WARNING:\2009 DANGER";
-      color: white;
-      transform: rotate(90deg);
-      background: #af0000;
-      position: absolute;
-      bottom: 18.5vmin;
-      left: -35vmin;
-      font-size: 5vmin;
-      font-family: Arial, Helvetica, sans-serif;
-      width: 49vmin;
-      text-align: center;
-      padding: 1vmin;
-      text-shadow: 0 0 1px #000;
-    }
-
-    /* ТЕКСТ СНИЗУ */
-    .text {
-      position: absolute;
-      color: white;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 5vmin;
-      background: #af0000;
-      padding: 1vmin;
-      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg) translate(33.5vmin, 27vmin);
-      text-align: center;
-      width: 49vmin;
-      z-index: 2;
-    }
-
-    /* БАЗА ДЛЯ КНОПКИ */
     .base {
       background: #cacaca;
       width: 20vmin;
-      height: 22vmin;
       border-radius: 27vmin;
       box-shadow: 0 6vmin 0.15vmin 0vmin #777, 0 4vmin 0.15vmin 0vmin #777, 0 2vmin 0.15vmin 0vmin #777;
-      padding: 0 2vmin 2vmin 2vmin;
-      z-index: 3;
+      padding: 0vmin 2vmin 2vmin 2vmin;
+      z-index: 1;
       transform: rotateX(60deg) rotateZ(0deg);
-      position: absolute;
+      margin-top: -4.5vmin;
+      height: 22vmin;
+      position: relative;
     }
 
-    /* САМА КРАСНАЯ КНОПКА */
     button#activate {
       background: #d60505;
       border: 0;
@@ -125,7 +71,7 @@
       position: relative;
       cursor: pointer;
       outline: none;
-      z-index: 4;
+      z-index: 2;
       box-shadow: 0 4vmin 0.15vmin 0vmin #af0000, 0 2vmin 0.15vmin 0vmin #af0000;
       top: -2.5vmin;
       border: 0.5vmin solid #af0000a1;
@@ -135,30 +81,33 @@
     button#activate:hover {
       box-shadow: 0 3vmin 0.15vmin 0vmin #af0000, 0 1vmin 0.15vmin 0vmin #af0000;
       top: -1.5vmin;
+      transition: all 0.5s ease 0s;
     }
 
-    button#activate:active, 
-    button#activate.pushed {
+    button#activate:active, button#activate.pushed {
       box-shadow: 0 1vmin 0.15vmin 0vmin #af0000, 0 1vmin 0.15vmin 0vmin #af0000;
       top: 0.5vmin;
+      transition: all 0.25s ease 0s;
     }
 
     button#activate.pushed {
       box-shadow: 0 0 20px 10px #ff3c3c, 0 0 100px 50px #ff2828;
       background: #ff0000;
+      border-bottom: 3px solid #00000020;
     }
 
-    /* 3D КРЫШКА И ШАРНИРЫ */
     .box {
       transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
       transform-origin: center top;
       transform-style: preserve-3d;
       width: 45vmin;
-      height: 45vmin;
       position: absolute;
       z-index: 5;
+      margin-top: 27vmin;
       transition: transform 1s ease 0s;
       cursor: pointer;
+      height: 45vmin;
+      margin-left: -32vmin;
     }
 
     .box.opened {
@@ -173,6 +122,7 @@
       opacity: 0.5;
       border: 3px solid #00a4b9;
       border-radius: 3px;
+      box-sizing: border-box;
       box-shadow: 0 0 3px 0 #00bcd48a;
     }
 
@@ -183,32 +133,107 @@
     .box > div:nth-child(5) { transform: rotateY(90deg) translate3d(-5vmin, 0, 40vmin); width: 10vmin; }
     .box > div:nth-child(6) { transform: rotateY(-90deg) translate3d(5vmin, 0vmin, 5vmin); width: 10vmin; }
 
+    .warning {
+      position: absolute;
+      z-index: 0;
+      width: 45vmin;
+      height: 45vmin;
+      background: repeating-linear-gradient(-45deg, black, black 3vmin, yellow 3vmin, yellow 6vmin);
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
+      box-shadow: 0 0 0 3vmin #af0000;
+    }
+
+    .warning:before {
+      content: "";
+      width: 80%;
+      height: 80%;
+      background: linear-gradient(45deg, #000000 0%, #414141 74%);
+      float: left;
+      margin-top: 10%;
+      margin-left: 10%;
+      border: 1vmin solid yellow;
+      border-radius: 1vmin;
+      box-sizing: border-box;
+    }
+
+    .warning:after {
+      content: "WARNING:\2009 DANGER";
+      color: white;
+      transform: rotate(90deg);
+      float: left;
+      background: #af0000;
+      position: absolute;
+      bottom: 18.5vmin;
+      left: -35vmin;
+      font-size: 5vmin;
+      font-family: Arial, Helvetica, serif;
+      width: 49vmin;
+      text-align: center;
+      padding: 1vmin;
+      text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
+    }
+
     .hinges {
       position: absolute;
-      z-index: 4;
+      z-index: 3;
       transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
     }
 
-    .hinges:before, 
-    .hinges:after {
+    .hinges:before, .hinges:after {
       content: "";
       background: #2b2b2b;
       width: 5vmin;
       height: 1.5vmin;
       position: absolute;
-      margin-top: -22.5vmin;
+      margin-top: -24.5vmin;
       z-index: 5;
       border: 2px solid #00000010;
       border-radius: 5px 5px 0 0;
+      box-sizing: border-box;
       margin-left: -16.25vmin;
     }
 
     .hinges:after {
       margin-left: 13.75vmin;
+      margin-top: -24.5vmin;
+    }
+
+    .box > span:before, .box > span:after {
+      content: "";
+      width: 5vmin;
+      height: 1.5vmin;
+      background: #103e4480;
+      position: absolute;
+      margin-left: 6vmin;
+      border-radius: 0 0 5px 5px;
+    }
+
+    .box > span:after {
+      margin-left: 36vmin;
+    }
+
+    .box > span {
+      transform: rotateX(89deg) translate(0.3vmin, 0.3vmin);
+      position: absolute;
+    }
+
+    .text {
+      position: absolute;
+      margin-top: 55vmin;
+      color: white;
+      font-family: Arial, Helvetica, serif;
+      font-size: 5vmin;
+      text-shadow: 0 0 1px #000, 0 0 1px #000, 0 0 1px #000;
+      perspective-origin: left;
+      background: #af0000;
+      padding: 1vmin;
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg) translate(33.5vmin, -2vmin);
+      text-align: center;
+      width: 49vmin;
     }
 
     /* ==========================================================================
-       3. ПАНЕЛЬ ТАЙМЕРА И УВЕДОМЛЕНИЙ
+       3. АДАПТИВНАЯ ПАНЕЛЬ И ШТОРКИ
        ========================================================================== */
     #panel {
       position: fixed;
@@ -217,37 +242,53 @@
       transform: translate(-50%, -50%);
       background: #ff0000d0;
       color: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, Helvetica, serif;
       width: 90vw;
       max-width: 500px;
-      padding: 20px;
-      box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.38);
+      box-sizing: border-box;
+      font-size: clamp(14px, 3.25vmin, 20px);
+      padding: 2vmin;
+      box-shadow: 0 0 0 100vw rgba(255,0,0,0.38), 0 0 0 5vmin rgba(255,0,0,0.38);
       z-index: 10;
       display: none;
       text-align: center;
+      text-shadow: 0 0 1px #fff, 0 0 3px #fff, 0 0 5px #fff;
+      animation: warning-ligth 1s 0s infinite;
       border-radius: 8px;
-      animation: warning-ligth 1s infinite;
     }
 
     #panel.show {
       display: block !important;
     }
 
-    #panel:before {
+    div#panel:before {
       content: "WARNING";
+      top: 1vmin;
+      position: relative;
+      font-size: clamp(24px, 8vmin, 50px);
+      width: 100%;
+      left: 0;
+      z-index: 6;
+      text-shadow: 0 0 1px #fff, 0 0 3px #fff;
+      border-bottom: 0.5vmin dotted #fff;
       display: block;
-      font-size: clamp(24px, 6vw, 40px);
-      border-bottom: 2px dotted #fff;
       margin-bottom: 10px;
     }
 
+    #msg {
+      margin-top: 2vmin;
+      text-shadow: 0 0 2px #fff;
+    }
+
     #time {
-      font-size: clamp(32px, 8vw, 60px);
-      background: rgba(0, 0, 0, 0.5);
-      margin: 15px auto;
-      padding: 10px;
-      width: 60%;
-      border-radius: 4px;
+      font-size: clamp(32px, 10vmin, 70px);
+      background: #00000080;
+      max-width: 35vmin;
+      margin: 3vmin auto !important;
+      position: relative;
+      border-radius: 0.25vmin;
+      text-shadow: 0 0 3px #000, 0 0 2px #000;
+      padding: 1vmin 0;
     }
 
     #time:before {
@@ -262,15 +303,20 @@
     }
 
     #abort {
-      background: rgba(255, 255, 255, 0.8);
+      background: #ffffffb8;
       color: #d30303;
       cursor: pointer;
-      padding: 10px 20px;
-      font-size: clamp(16px, 4vw, 24px);
+      padding: 1vmin 2.75vmin;
+      font-size: clamp(18px, 6vmin, 32px);
+      border-radius: 0.25vmin;
       font-weight: bold;
+      animation: highlight 1s 0s infinite;
       display: inline-block;
-      border-radius: 4px;
-      animation: highlight 1s infinite;
+    }
+
+    #abort:hover {
+      background: #ffffff;
+      box-shadow: 0 0 15px 5px #fff;
     }
 
     #abort.hide {
@@ -281,31 +327,27 @@
       display: none;
       color: #fff;
       z-index: 5;
-      font-size: clamp(20px, 5vw, 36px);
-      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(20px, 8vmin, 40px);
+      font-family: Arial, Helvetica, serif;
       text-shadow: 0 0 1px #fff;
-    }
+    }	
 
     #detonate.show {
       display: block;
-      animation: blink 0.25s infinite;
+      animation: blink 0.25s 0s infinite;
     }
 
-    /* ==========================================================================
-       4. СЦЕНА ВЫКЛЮЧЕНИЯ И ПЕРЕЗАПУСКА
-       ========================================================================== */
-    #turn-off {
+    div#turn-off {
       position: fixed;
-      top: 0;
+      background: #ffffff80;
       left: 0;
+      top: 0;
       width: 100vw;
       height: 0vh;
-      background: rgba(255, 255, 255, 0.5);
       z-index: 20;
     }
 
-    #turn-off:before, 
-    #turn-off:after {
+    div#turn-off:before, div#turn-off:after {
       content: "";
       position: fixed;
       left: 0;
@@ -316,19 +358,55 @@
       transition: height 0.5s ease 0s;
     }
 
-    #turn-off:after {
+    div#turn-off:after {
       top: inherit;
       bottom: 0;
     }
 
-    #turn-off.close {
+    div#turn-off.close {
       height: 100vh;
     }
 
-    #turn-off.close:before, 
-    #turn-off.close:after {
+    div#turn-off.close:before, div#turn-off.close:after {
       transition: height 0.1s ease 0.1s;
       height: 50vh;
+    }
+
+    #closing {
+      width: 100vw;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    div#closing:before, div#closing:after {
+      content: "";
+      width: 50vw;
+      height: 1.5vh;
+      left: -50vw;
+      top: 49vh;
+      position: absolute;
+      background: #000000;
+      z-index: 21;
+      transition: left 0.2s ease 0s;
+    }
+
+    div#closing:after {
+      right: -50vw;
+      transition: right 0.2s ease 0s;
+      left: initial;
+    }
+
+    div#closing.close:before {
+      left: 0;
+      transition: left 0.2s ease 0.2s;
+    }
+
+    div#closing.close:after {
+      right: 0;
+      transition: right 0.2s ease 0.2s;
     }
 
     #restart {
@@ -340,19 +418,18 @@
       display: none;
     }
 
-    #restart.show {
-      display: block;
-    }
-
     #reload {
       width: 60px;
       height: 60px;
-      border-radius: 50%;
-      border: none;
-      background: #fff;
+      border-radius: 100%;
+      border: 0;
+      opacity: 0;
       cursor: pointer;
-      position: relative;
+      transform: rotate(0deg);
       transition: transform 0.5s ease 0s;
+      outline: none;
+      background: #ffffff;
+      position: relative;
     }
 
     #reload:hover {
@@ -360,17 +437,26 @@
       transform: rotate(360deg);
     }
 
+    #restart.show { 
+      display: block; 
+    }
+
+    #restart.show #reload {  
+      animation: refresh 3.5s 0s 1; 
+      opacity: 1;
+    }
+
     button#reload:before {
       content: "";
-      width: 60%;
-      height: 60%;
+      width: 30px;
+      height: 30px;
       position: absolute;
-      left: 20%;
-      top: 20%;
+      left: 11px;
+      top: 11px;
       border-radius: 100%;
       border: 4px solid #000;
-      border-bottom-color: transparent;
       box-sizing: border-box;
+      border-bottom-color: transparent;
     }
 
     button#reload:after {
@@ -385,52 +471,69 @@
       position: fixed;
       bottom: 15px;
       right: 15px;
+      background: #8bc34a80;
       width: 44px;
       height: 44px;
-      background: rgba(139, 195, 74, 0.8);
+      cursor: pointer;
       border: 2px solid #151515;
       border-radius: 6px;
-      cursor: pointer;
       z-index: 15;
     }
 
     #mute.muted {
-      background: rgba(255, 0, 0, 0.8);
+      background: #ff000080;
     }
 
-    /* СТОРОННИЙ ВИДЖЕТ */
-    iframe[id*="sitebot"], 
-    div[class*="sitebot"] {
-      max-width: 90vw !important;
-      right: 10px !important;
-      bottom: 80px !important;
-      z-index: 14 !important;
+    #mute:before {
+      content: "";
+      border: 6px solid transparent;
+      height: 14px;
+      border-right: 14px solid #151515;
+      position: absolute;
+      border-left-width: 0;
+      top: 13px;
+      right: 10px;
+    }
+
+    #mute:after {
+      content: "";
+      border: 0px solid transparent;
+      height: 14px;
+      border-right: 10px solid #151515;
+      position: absolute;
+      top: 18px;
+      right: 24px;
     }
 
     /* АНИМАЦИИ */
     @keyframes warning-ligth {
-      0% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.4); }
-      50% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.1); }
+      0% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.38), 0 0 0 5vmin rgba(255, 0, 0, 0.38); }
+      50% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.12), 0 0 0 5vmin rgba(255, 0, 0, 0.12); }
     }
 
     @keyframes highlight {
-      50% { box-shadow: 0 0 15px 5px #fff; }
+      50% { box-shadow: 0 0 15px 5px #fff;}
     }
 
     @keyframes blink {
+      50% { opacity: 0;}
+    }
+
+    @keyframes refresh {
+      0% { opacity: 0; }
       50% { opacity: 0; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ФОНОВАЯ СЕТКА -->
   <div class="grid"></div>
 
-  <!-- 3D СЦЕНА КНОПКИ -->
-  <div class="scene">
+  <!-- ОБЕРТКА СЦЕНЫ ДЛЯ СОХРАНЕНИЯ ТОЧНОЙ ГЕОМЕТРИИ АВТОРА -->
+  <div class="scene-wrapper">
     <div class="warning"></div>
-    
+
     <div class="base">
       <button id="activate">
         <span></span>
@@ -449,7 +552,6 @@
     </div>
   </div>
 
-  <!-- ВСПЛЫВАЮЩАЯ ПАНЕЛЬ ТАЙМЕРА -->
   <div id="panel">
     <div id="msg">DEVICE SELF-DESTRUCTION</div>
     <div id="time">9</div>
@@ -457,22 +559,17 @@
     <span id="detonate">DETONATE</span>
   </div>
 
-  <!-- ЭКРАНЫ ВЫКЛЮЧЕНИЯ И ПЕРЕЗАПУСКА -->
   <div id="turn-off"></div>
   <div id="closing"></div>
 
-  <div id="restart">
-    <button id="reload"></button>
-  </div>
+  <div id="restart"><button id="reload"></button></div>
 
   <div id="mute"></div>
 
-  <!-- АУДИО -->
   <audio id="alarm">
     <source src="https://raw.githubusercontent.com/UzunDemir/gaga/main/self-destruct-count.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- ЛОГИКА JS -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       var theCount;
@@ -500,7 +597,6 @@
           time.classList.add("crono");
           abort.classList.add("hide");
           detonate.classList.add("show");
-          
           setTimeout(function () {
             turnOff.classList.add("close");
             turnOffHor.classList.add("close");
@@ -523,7 +619,6 @@
         alarm.load();
         alarm.currentTime = 10.1;
         alarm.play();
-        
         setTimeout(function () {
           panel.classList.add("show");
           theCount = setInterval(showCountDown, 1000);
@@ -555,7 +650,6 @@
         time.innerText = "9";
       });
 
-      // Автоматическое закрытие крышки при старте
       setTimeout(function () {
         cover.classList.remove("opened");
       }, 100);
@@ -572,7 +666,6 @@
     });
   </script>
 
-  <!-- СТРИПТ ЧАТ-БОТА VERCEL -->
   <script src="https://sitebot-nu.vercel.app/loader.js" data-bot="pk_f15c0c8c4f13e41b3aecb277" async></script>
 </body>
 </html>
