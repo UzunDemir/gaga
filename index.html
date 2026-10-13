@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gaga.uz - new project starting soon!</title>
+  
+  <style>
+    /* ==========================================================================
+       1. БАЗОВЫЙ СБРОС И ЦЕНТРИРОВАНИЕ
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-color: #151515;
+    }
+
+    /* ФОНОВАЯ СЕТКА */
+    .grid {
+      background: repeating-linear-gradient(150deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 49px, rgb(255 255 255 / 10%) 50px, rgb(0 0 0 / 30%) 51px, rgba(255,255,255,0) 55px), 
+                  repeating-linear-gradient(30deg, rgba(255,255,255,0) 0, rgba(255,255,255,0) 49px, rgb(255 255 255 / 10%) 50px, rgb(0 0 0 / 30%) 51px, rgba(255,255,255,0) 55px);
+      position: fixed;
+      width: 200vw;
+      height: 150vh;
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       2. ЕДИНЫЙ 3D-КОНТЕЙНЕР ДЛЯ ВСЕХ ЭЛЕМЕНТОВ КНОПКИ
+       ========================================================================== */
+    .scene {
+      position: relative;
+      width: 45vmin;
+      height: 45vmin;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+      z-index: 1;
+    }
+
+    /* ПЛАТФОРМА ОПАСНОСТИ (ЖЕЛТО-ЧЕРНАЯ) */
+    .warning {
+      position: absolute;
+      width: 45vmin;
+      height: 45vmin;
+      background: repeating-linear-gradient(-45deg, black, black 3vmin, yellow 3vmin, yellow 6vmin);
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
+      box-shadow: 0 0 0 3vmin #af0000;
+      z-index: 1;
+    }
+
+    .warning:before {
+      content: "";
+      width: 80%;
+      height: 80%;
+      background: linear-gradient(45deg, #000000 0%, #414141 74%);
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      border: 1vmin solid yellow;
+      border-radius: 1vmin;
+    }
+
+    .warning:after {
+      content: "WARNING:\2009 DANGER";
+      color: white;
+      transform: rotate(90deg);
+      background: #af0000;
+      position: absolute;
+      bottom: 18.5vmin;
+      left: -35vmin;
+      font-size: 5vmin;
+      font-family: Arial, Helvetica, sans-serif;
+      width: 49vmin;
+      text-align: center;
+      padding: 1vmin;
+      text-shadow: 0 0 1px #000;
+    }
+
+    /* ТЕКСТ СНИЗУ */
+    .text {
+      position: absolute;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 5vmin;
+      background: #af0000;
+      padding: 1vmin;
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg) translate(33.5vmin, 27vmin);
+      text-align: center;
+      width: 49vmin;
+      z-index: 2;
+    }
+
+    /* БАЗА ДЛЯ КНОПКИ */
+    .base {
+      background: #cacaca;
+      width: 20vmin;
+      height: 22vmin;
+      border-radius: 27vmin;
+      box-shadow: 0 6vmin 0.15vmin 0vmin #777, 0 4vmin 0.15vmin 0vmin #777, 0 2vmin 0.15vmin 0vmin #777;
+      padding: 0 2vmin 2vmin 2vmin;
+      z-index: 3;
+      transform: rotateX(60deg) rotateZ(0deg);
+      position: absolute;
+    }
+
+    /* САМА КРАСНАЯ КНОПКА */
+    button#activate {
+      background: #d60505;
+      border: 0;
+      width: 20vmin;
+      height: 19vmin;
+      border-radius: 100%;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      z-index: 4;
+      box-shadow: 0 4vmin 0.15vmin 0vmin #af0000, 0 2vmin 0.15vmin 0vmin #af0000;
+      top: -2.5vmin;
+      border: 0.5vmin solid #af0000a1;
+      transition: all 0.25s ease 0s;
+    }
+
+    button#activate:hover {
+      box-shadow: 0 3vmin 0.15vmin 0vmin #af0000, 0 1vmin 0.15vmin 0vmin #af0000;
+      top: -1.5vmin;
+    }
+
+    button#activate:active, 
+    button#activate.pushed {
+      box-shadow: 0 1vmin 0.15vmin 0vmin #af0000, 0 1vmin 0.15vmin 0vmin #af0000;
+      top: 0.5vmin;
+    }
+
+    button#activate.pushed {
+      box-shadow: 0 0 20px 10px #ff3c3c, 0 0 100px 50px #ff2828;
+      background: #ff0000;
+    }
+
+    /* 3D КРЫШКА И ШАРНИРЫ */
+    .box {
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
+      transform-origin: center top;
+      transform-style: preserve-3d;
+      width: 45vmin;
+      height: 45vmin;
+      position: absolute;
+      z-index: 5;
+      transition: transform 1s ease 0s;
+      cursor: pointer;
+    }
+
+    .box.opened {
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 180deg);
+    }
+
+    .box div {
+      position: absolute;
+      width: 45vmin;
+      height: 45vmin;
+      background: #00bcd47d;
+      opacity: 0.5;
+      border: 3px solid #00a4b9;
+      border-radius: 3px;
+      box-shadow: 0 0 3px 0 #00bcd48a;
+    }
+
+    .box > div:nth-child(1) { opacity: 0; }
+    .box > div:nth-child(2) { transform: rotateX(90deg) translate3d(0px, 5vmin, 5vmin); height: 10vmin; }
+    .box > div:nth-child(3) { transform: rotateX(0deg) translate3d(0, 0, 10vmin); }
+    .box > div:nth-child(4) { transform: rotateX(270deg) translate3d(0px, -5vmin, 40vmin); height: 10vmin; }
+    .box > div:nth-child(5) { transform: rotateY(90deg) translate3d(-5vmin, 0, 40vmin); width: 10vmin; }
+    .box > div:nth-child(6) { transform: rotateY(-90deg) translate3d(5vmin, 0vmin, 5vmin); width: 10vmin; }
+
+    .hinges {
+      position: absolute;
+      z-index: 4;
+      transform: rotateX(-35deg) rotateY(45deg) rotateZ(0deg) rotate3d(1, 0, 0, 90deg);
+    }
+
+    .hinges:before, 
+    .hinges:after {
+      content: "";
+      background: #2b2b2b;
+      width: 5vmin;
+      height: 1.5vmin;
+      position: absolute;
+      margin-top: -22.5vmin;
+      z-index: 5;
+      border: 2px solid #00000010;
+      border-radius: 5px 5px 0 0;
+      margin-left: -16.25vmin;
+    }
+
+    .hinges:after {
+      margin-left: 13.75vmin;
+    }
+
+    /* ==========================================================================
+       3. ПАНЕЛЬ ТАЙМЕРА И УВЕДОМЛЕНИЙ
+       ========================================================================== */
+    #panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ff0000d0;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      width: 90vw;
+      max-width: 500px;
+      padding: 20px;
+      box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.38);
+      z-index: 10;
+      display: none;
+      text-align: center;
+      border-radius: 8px;
+      animation: warning-ligth 1s infinite;
+    }
+
+    #panel.show {
+      display: block !important;
+    }
+
+    #panel:before {
+      content: "WARNING";
+      display: block;
+      font-size: clamp(24px, 6vw, 40px);
+      border-bottom: 2px dotted #fff;
+      margin-bottom: 10px;
+    }
+
+    #time {
+      font-size: clamp(32px, 8vw, 60px);
+      background: rgba(0, 0, 0, 0.5);
+      margin: 15px auto;
+      padding: 10px;
+      width: 60%;
+      border-radius: 4px;
+    }
+
+    #time:before {
+      content: "00:0";
+    }
+
+    #time.crono {
+      background: #ffffffba;
+      transition: background 0.5s ease 0s;
+      color: #ff0000;
+      text-shadow: 0 0 1px #ffffff, 0 0 2px #ffffff;
+    }
+
+    #abort {
+      background: rgba(255, 255, 255, 0.8);
+      color: #d30303;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: clamp(16px, 4vw, 24px);
+      font-weight: bold;
+      display: inline-block;
+      border-radius: 4px;
+      animation: highlight 1s infinite;
+    }
+
+    #abort.hide {
+      display: none;
+    }
+
+    #detonate {
+      display: none;
+      color: #fff;
+      z-index: 5;
+      font-size: clamp(20px, 5vw, 36px);
+      font-family: Arial, Helvetica, sans-serif;
+      text-shadow: 0 0 1px #fff;
+    }
+
+    #detonate.show {
+      display: block;
+      animation: blink 0.25s infinite;
+    }
+
+    /* ==========================================================================
+       4. СЦЕНА ВЫКЛЮЧЕНИЯ И ПЕРЕЗАПУСКА
+       ========================================================================== */
+    #turn-off {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 0vh;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 20;
+    }
+
+    #turn-off:before, 
+    #turn-off:after {
+      content: "";
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 0vh;
+      background: #000;
+      width: 100vw;
+      transition: height 0.5s ease 0s;
+    }
+
+    #turn-off:after {
+      top: inherit;
+      bottom: 0;
+    }
+
+    #turn-off.close {
+      height: 100vh;
+    }
+
+    #turn-off.close:before, 
+    #turn-off.close:after {
+      transition: height 0.1s ease 0.1s;
+      height: 50vh;
+    }
+
+    #restart {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 30;
+      display: none;
+    }
+
+    #restart.show {
+      display: block;
+    }
+
+    #reload {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.5s ease 0s;
+    }
+
+    #reload:hover {
+      background: #ef0000;
+      transform: rotate(360deg);
+    }
+
+    button#reload:before {
+      content: "";
+      width: 60%;
+      height: 60%;
+      position: absolute;
+      left: 20%;
+      top: 20%;
+      border-radius: 100%;
+      border: 4px solid #000;
+      border-bottom-color: transparent;
+      box-sizing: border-box;
+    }
+
+    button#reload:after {
+      content: "";
+      border: 6px solid transparent;
+      border-top: 8px solid black;
+      position: absolute;
+      transform: rotate(40deg) translate(2px, 4px);
+    }
+
+    #mute {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      width: 44px;
+      height: 44px;
+      background: rgba(139, 195, 74, 0.8);
+      border: 2px solid #151515;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 15;
+    }
+
+    #mute.muted {
+      background: rgba(255, 0, 0, 0.8);
+    }
+
+    /* СТОРОННИЙ ВИДЖЕТ */
+    iframe[id*="sitebot"], 
+    div[class*="sitebot"] {
+      max-width: 90vw !important;
+      right: 10px !important;
+      bottom: 80px !important;
+      z-index: 14 !important;
+    }
+
+    /* АНИМАЦИИ */
+    @keyframes warning-ligth {
+      0% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.4); }
+      50% { box-shadow: 0 0 0 100vw rgba(255, 0, 0, 0.1); }
+    }
+
+    @keyframes highlight {
+      50% { box-shadow: 0 0 15px 5px #fff; }
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ФОНОВАЯ СЕТКА -->
+  <div class="grid"></div>
+
+  <!-- 3D СЦЕНА КНОПКИ -->
+  <div class="scene">
+    <div class="warning"></div>
+    
+    <div class="base">
+      <button id="activate">
+        <span></span>
+      </button>
+    </div>
+
+    <div class="box opened" id="cover">
+      <div></div><div></div><div></div><div></div><div></div><div></div>
+      <span></span><span></span>
+    </div>
+
+    <div class="hinges"></div>
+
+    <div class="text">
+      SELF-&thinsp;DESTRUCT
+    </div>
+  </div>
+
+  <!-- ВСПЛЫВАЮЩАЯ ПАНЕЛЬ ТАЙМЕРА -->
+  <div id="panel">
+    <div id="msg">DEVICE SELF-DESTRUCTION</div>
+    <div id="time">9</div>
+    <span id="abort">ABORT</span>
+    <span id="detonate">DETONATE</span>
+  </div>
+
+  <!-- ЭКРАНЫ ВЫКЛЮЧЕНИЯ И ПЕРЕЗАПУСКА -->
+  <div id="turn-off"></div>
+  <div id="closing"></div>
+
+  <div id="restart">
+    <button id="reload"></button>
+  </div>
+
+  <div id="mute"></div>
+
+  <!-- АУДИО -->
+  <audio id="alarm">
+    <source src="https://raw.githubusercontent.com/UzunDemir/gaga/main/self-destruct-count.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ЛОГИКА JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var theCount;
+      var alarm = document.getElementById("alarm");
+      var panel = document.getElementById("panel");
+      var turnOff = document.getElementById("turn-off");
+      var turnOffHor = document.getElementById("closing");
+      var detonate = document.getElementById("detonate");
+      var time = document.getElementById("time");
+      var cover = document.getElementById("cover");
+      var btn = document.getElementById("activate");
+      var abort = document.getElementById("abort");
+      var restart = document.getElementById("restart");
+      var reload = document.getElementById("reload");
+      var mute = document.getElementById("mute");
+
+      alarm.volume = 0.5;
+
+      function showCountDown() {
+        var current = parseInt(time.innerText, 10);
+        time.innerText = current - 1;
+
+        if (parseInt(time.innerText, 10) === 0) {
+          clearInterval(theCount);
+          time.classList.add("crono");
+          abort.classList.add("hide");
+          detonate.classList.add("show");
+          
+          setTimeout(function () {
+            turnOff.classList.add("close");
+            turnOffHor.classList.add("close");
+            restart.classList.add("show");
+            alarm.pause();
+          }, 1500);
+        }
+      }
+
+      cover.addEventListener("click", function () {
+        if (this.classList.contains("opened")) {
+          this.classList.remove("opened");
+        } else {
+          this.classList.add("opened");
+        }
+      });
+
+      btn.addEventListener("click", function () {
+        this.classList.add("pushed");
+        alarm.load();
+        alarm.currentTime = 10.1;
+        alarm.play();
+        
+        setTimeout(function () {
+          panel.classList.add("show");
+          theCount = setInterval(showCountDown, 1000);
+          alarm.load();
+          alarm.play();
+        }, 500);
+      });
+
+      abort.addEventListener("click", function () {
+        btn.classList.remove("pushed");
+        panel.classList.remove("show");
+        clearInterval(theCount);
+        time.innerText = "9";
+        alarm.pause();
+        alarm.currentTime = 10;
+        alarm.play();
+      });
+
+      reload.addEventListener("click", function () {
+        panel.classList.remove("show");
+        turnOff.classList.remove("close");
+        turnOffHor.classList.remove("close");
+        abort.classList.remove("hide");
+        detonate.classList.remove("show");
+        cover.classList.remove("opened");
+        btn.classList.remove("pushed");
+        restart.classList.remove("show");
+        time.classList.remove("crono");
+        time.innerText = "9";
+      });
+
+      // Автоматическое закрытие крышки при старте
+      setTimeout(function () {
+        cover.classList.remove("opened");
+      }, 100);
+
+      mute.addEventListener("click", function () {
+        if (this.classList.contains("muted")) {
+          alarm.muted = false;
+          this.classList.remove("muted");
+        } else {
+          alarm.muted = true;
+          this.classList.add("muted");
+        }
+      });
+    });
+  </script>
+
+  <!-- СТРИПТ ЧАТ-БОТА VERCEL -->
+  <script src="https://sitebot-nu.vercel.app/loader.js" data-bot="pk_f15c0c8c4f13e41b3aecb277" async></script>
+</body>
+</html>
